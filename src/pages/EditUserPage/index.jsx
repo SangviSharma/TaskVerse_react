@@ -1,0 +1,116 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const EditUser = () => {
+  const navigate = useNavigate();
+
+  const [form,setForm]=useState({
+    name:"Sangvi Sharma",
+    email:"sangvi@mail.com",
+    role:"Admin"
+  });
+
+  const [touched,setTouched]=useState({});
+
+  const handleChange=e=>{
+    setForm({...form,[e.target.name]:e.target.value});
+  };
+
+  const handleBlur=e=>{
+    setTouched({...touched,[e.target.name]:true});
+  };
+
+  const isError=field=>touched[field]&&!form[field];
+
+  const inputStyle=field=>({
+    width:"100%",
+    padding:"12px",
+    borderRadius:"8px",
+    border:isError(field)
+      ?"2px solid #e74c3c"
+      :"1px solid #ccc",
+    outline:"none"
+  });
+
+  const handleSubmit=e=>{
+    e.preventDefault();
+    navigate("/users");
+  };
+
+  return(
+    <div style={{
+      minHeight:"100vh",
+      display:"flex",
+      justifyContent:"center",
+      alignItems:"center",
+      backgroundImage: "url('https://i.pinimg.com/1200x/84/e3/f7/84e3f79c41d4218f2ecafacaa83a7538.jpg')",
+      backgroundSize: "cover"
+    }}>
+
+      <form onSubmit={handleSubmit}
+        style={{
+          width:"450px",
+          background:"white",
+          padding:"40px",
+          borderRadius:"12px",
+          boxShadow:"0 4px 12px rgba(0,0,0,0.1)"
+        }}>
+
+        <h2 style={{color:"#c24244",marginBottom:"20px"}}>
+          Edit User
+        </h2>
+
+        <div style={{marginBottom:"15px"}}>
+          <input
+            name="name"
+            placeholder="Full Name"
+            value={form.name}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            style={inputStyle("name")}
+          />
+        </div>
+
+        <div style={{marginBottom:"15px"}}>
+          <input
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            style={inputStyle("email")}
+          />
+        </div>
+
+        <div style={{marginBottom:"20px"}}>
+          <select
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            style={inputStyle("role")}
+          >
+            <option>User</option>
+            <option>Admin</option>
+          </select>
+        </div>
+
+        <button
+          style={{
+            width:"100%",
+            padding:"12px",
+            background:"#c24244",
+            color:"white",
+            border:"none",
+            borderRadius:"8px",
+            fontWeight:"600",
+            cursor:"pointer"
+          }}>
+          Update User
+        </button>
+
+      </form>
+    </div>
+  );
+};
+
+export default EditUser;
