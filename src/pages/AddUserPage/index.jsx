@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../api/api";
+import axios from "axios";
 
 const AddUser = () => {
 
   const navigate = useNavigate();
 
   const [form,setForm] = useState({
-    name:"",
-    email:"",
-    role:"User",
-    status:"Active"
-  });
+  name:"",
+  email:"",
+  password:"",
+  role:"User",
+  status:"Active"
+});
 
   const [errors,setErrors] = useState({});
   const [touched,setTouched] = useState({});
@@ -49,11 +52,31 @@ const AddUser = () => {
     return Object.keys(newErrors).length===0;
   };
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    if(!validateSubmit()) return;
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!validateSubmit()) return;
+
+  try {
+    await axios.post(
+      "http://localhost:8080/api/users",
+      {
+        name: form.name,
+        email: form.email,
+        password: "123",   
+        role: form.role,
+        status: form.status
+      }
+    );
+
+    alert("User added successfully");
     navigate("/users");
-  };
+
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    alert("Failed to add user");
+  }
+};
 
   const inputField = (name,placeholder,type="text") => (
     <div style={{position:"relative",marginBottom:"20px"}}>
@@ -130,6 +153,7 @@ const AddUser = () => {
 
           {inputField("name","Full Name")}
           {inputField("email","Email","email")}
+          {inputField("password","Password","password")}
 
           <select
             name="role"

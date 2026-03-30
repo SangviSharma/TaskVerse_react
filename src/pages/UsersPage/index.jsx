@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../api/api";
 
 const Users = () => {
 
   const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
 
-  const users = [
-    { id: 1, name: "Sangvi Sharma", email: "sangvi@mail.com", role: "Admin", status: "Active" },
-    { id: 2, name: "Sam Wilson", email: "sam@mail.com", role: "User", status: "Active" }
-  ];
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    const res = await API.get("/users");
+    setUsers(res.data);
+  };
+
+  const deleteUser = async (id) => {
+    await API.delete(`/users/${id}`);
+    fetchUsers();
+  };
+
 
   const thStyle = {
     padding: "16px",

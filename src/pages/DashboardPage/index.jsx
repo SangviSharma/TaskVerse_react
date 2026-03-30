@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
+import { useEffect } from "react";
+import API from "../../api/api";
 
 const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  const [tasks, setTasks] = useState([
-    { id: 1, name: "Design UI", priority: "Low", start: "2026-03-20", due: "2026-03-25", notes: "Homepage", progress: 20 },
-    { id: 2, name: "Backend API", priority: "High", start: "2026-03-21", due: "2026-03-28", notes: "SpringBoot", progress: 50 }
-  ]);
+  const [tasks, setTasks] = useState([]);
+  useEffect(() => {
+  API.get("/tasks")
+    .then(res => setTasks(res.data))
+    .catch(err => console.log(err));
+   }, []);
 
   const deleteTask = (id) =>
     setTasks(tasks.filter(t => t.id !== id));
@@ -107,8 +111,8 @@ const Dashboard = () => {
                     </span>
                   </td>
 
-                  <td style={cellStyle}>{t.start}</td>
-                  <td style={cellStyle}>{t.due}</td>
+                  <td style={cellStyle}>{t.startDate}</td>
+                  <td style={cellStyle}>{t.dueDate}</td>
                   <td style={cellStyle}>{t.notes}</td>
 
                   <td style={cellStyle}>
