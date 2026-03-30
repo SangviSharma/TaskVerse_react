@@ -1,16 +1,27 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 const EditUser = () => {
+
   const navigate = useNavigate();
+  const { id } = useParams();   
 
   const [form,setForm]=useState({
-    name:"Sangvi Sharma",
-    email:"sangvi@mail.com",
-    role:"Admin"
+    name:"",
+    email:"",
+    role:"User",
+    status:"Active"
   });
 
   const [touched,setTouched]=useState({});
+
+ 
+  useEffect(() => {
+    axios.get(`http://localhost:8080/api/users/${id}`)
+      .then(res => setForm(res.data))
+      .catch(err => console.log(err));
+  }, [id]);
 
   const handleChange=e=>{
     setForm({...form,[e.target.name]:e.target.value});
@@ -32,9 +43,23 @@ const EditUser = () => {
     outline:"none"
   });
 
-  const handleSubmit=e=>{
+ 
+  const handleSubmit=async(e)=>{
     e.preventDefault();
-    navigate("/users");
+
+    try{
+      await axios.put(
+        `http://localhost:8080/api/users/${id}`,
+        form
+      );
+
+      alert("User Updated");
+      navigate("/users");
+
+    }catch(err){
+      console.error(err);
+      alert("Update failed");
+    }
   };
 
   return(
@@ -43,8 +68,8 @@ const EditUser = () => {
       display:"flex",
       justifyContent:"center",
       alignItems:"center",
-      backgroundImage: "url('https://i.pinimg.com/1200x/84/e3/f7/84e3f79c41d4218f2ecafacaa83a7538.jpg')",
-      backgroundSize: "cover"
+      backgroundImage:"url('https://i.pinimg.com/1200x/84/e3/f7/84e3f79c41d4218f2ecafacaa83a7538.jpg')",
+      backgroundSize:"cover"
     }}>
 
       <form onSubmit={handleSubmit}
@@ -82,7 +107,7 @@ const EditUser = () => {
           />
         </div>
 
-        <div style={{marginBottom:"20px"}}>
+        <div style={{marginBottom:"15px"}}>
           <select
             name="role"
             value={form.role}
@@ -91,6 +116,18 @@ const EditUser = () => {
           >
             <option>User</option>
             <option>Admin</option>
+          </select>
+        </div>
+
+        <div style={{marginBottom:"20px"}}>
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+            style={inputStyle("status")}
+          >
+            <option>Active</option>
+            <option>Inactive</option>
           </select>
         </div>
 

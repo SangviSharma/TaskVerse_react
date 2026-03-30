@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"
 import { useEffect } from "react";
 import API from "../../api/api";
+import axios from "axios";
 
 const Dashboard = () => {
 
@@ -14,8 +15,24 @@ const Dashboard = () => {
     .catch(err => console.log(err));
    }, []);
 
-  const deleteTask = (id) =>
-    setTasks(tasks.filter(t => t.id !== id));
+  const deleteTask = async(id) => {
+  
+      const confirmDelete = window.confirm("Delete this task?");
+      if(!confirmDelete) return;
+  
+      try{
+        await axios.delete(`http://localhost:8080/api/tasks/${id}`);
+  
+        
+        setTasks(tasks.filter(t => t.id !== id));
+  
+        alert("Task deleted");
+  
+      }catch(err){
+        console.error(err);
+        alert("Delete failed");
+      }
+    };
 
   const priorityColor = (p) =>
     p === "High" ? "#c24244" :

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
+import axios from "axios";
+
 
 const Users = () => {
 
@@ -12,13 +14,31 @@ const Users = () => {
   }, []);
 
   const fetchUsers = async () => {
-    const res = await API.get("/users");
-    setUsers(res.data);
+    try {
+      const res = await axios.get("http://localhost:8080/api/users");
+      setUsers(res.data);
+    } catch (err) {
+      console.error("Error fetching users", err);
+    }
   };
 
-  const deleteUser = async (id) => {
-    await API.delete(`/users/${id}`);
-    fetchUsers();
+   const deleteUser = async(id) => {
+
+    const confirmDelete = window.confirm("Delete this user?");
+    if(!confirmDelete) return;
+
+    try{
+      await axios.delete(`http://localhost:8080/api/users/${id}`);
+
+      
+      setUsers(users.filter(u => u.id !== id));
+
+      alert("User deleted");
+
+    }catch(err){
+      console.error(err);
+      alert("Delete failed");
+    }
   };
 
 
@@ -165,7 +185,7 @@ const Users = () => {
                   <td style={tdStyle}>
                     <button style={editBtn}
                     onClick={() => navigate(`/edit-user/${user.id}`)}>Edit</button>
-                    <button style={deleteBtn}>Delete</button>
+                    <button style={deleteBtn} onClick={() => deleteUser(user.id)}>Delete</button>
                   </td>
 
                 </tr>
